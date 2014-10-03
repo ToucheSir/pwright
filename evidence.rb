@@ -1,10 +1,14 @@
 class Evidence
-  attr_reader :id, :desc, :name
-  def initialize(id, name, description)
+  attr_reader :desc, :name
+  def initialize(name, description, quiet=false)
     @desc = description
     @name = name
-    @id = id
     $cr << self
+    unless quiet
+      puts "#{name} added to the Court Record.".bold + "\033[0m "
+      check(name)
+      puts
+    end
   end
   def update(description)
     @desc = description
@@ -19,19 +23,24 @@ def disp_cr
 end
 
 def check(name)
-  if $cr.select {|x| x.name == name}[0]
-    puts $cr.select {|x| x.name == name}[0].desc
+  if $cr.select {|x| x.name.split.any? {|i| i.downcase == name.downcase}}[0] || $cr.select {|x| x.name.downcase == name.downcase}[0]
+    puts ($cr.select {|x| x.name.split.any? {|i| i.downcase == name.downcase}}[0] || $cr.select {|x| x.name.downcase == name.downcase}[0]).desc
   else
-    puts ($pf.select {|x| x.name == name}[0] || $pf.select {|x| x.name.split[0] == name}[0] || $pf.select {|x| x.name.split[1] == name}[0]).desc
+    pr = ($pf.select {|x| x.name.downcase == name.downcase}[0] || $pf.select {|x| x.name.split[0].downcase == name.downcase}[0] || $pf.select {|x| x.name.split[1].downcase == name.downcase}[0])
+    if pr.nil?
+      puts "Unknown evidence #{name}."
+    else
+      puts pr.desc
+    end
   end
+  puts
 end
 
 class Profile
-  attr_reader :id, :desc, :name
-  def initialize(id, name, description, quiet=false)
+  attr_reader :desc, :name
+  def initialize(name, description, quiet=false)
     @desc = description
     @name = name
-    @id = id
     $pf << self
     unless quiet
       puts "#{name} added to the Court Record.".bold + "\033[0m "
@@ -49,4 +58,5 @@ def disp_pf
   $pf.each do |ev|
     puts ev.name
   end
+  puts
 end
