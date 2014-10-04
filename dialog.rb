@@ -22,10 +22,10 @@ end
 def char_if_pressed
   c = nil
   if $stdin.ready?
-    begin
+    if RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
       require 'win32api'
       c = Win32API.new('crtdll', '_getch', [], 'L').Call
-    rescue
+    else
       system("stty raw -echo") # turn raw input on
       c = $stdin.getc
       system("stty -raw echo") # turn raw input off
