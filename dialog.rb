@@ -36,7 +36,9 @@ end
 
 def dialog(text, name='', pauses=[], delay=0.05, pausedelay=0.2, autoend=false)
   unless name == ''; print "#{name}: " end
-  `stty -echo`
+  unless RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
+    `stty -echo`
+  end
   sleep(pausedelay)
   current_color = "\033[0m"
   i = 0
@@ -48,7 +50,9 @@ def dialog(text, name='', pauses=[], delay=0.05, pausedelay=0.2, autoend=false)
         gets
         puts
       end
-      `stty echo`
+      unless RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
+        `stty echo`
+      end
       return
     end
     while text[i..i+4] =~ /^\033\[[0-9]+m/
@@ -71,7 +75,9 @@ def dialog(text, name='', pauses=[], delay=0.05, pausedelay=0.2, autoend=false)
     gets
     puts
   end
-  `stty echo`
+  unless RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
+    `stty echo`
+  end
 end
 
 def cutscene(text, name='', pauses=[], delay=0.07, pausedelay=0.2)

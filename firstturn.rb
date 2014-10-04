@@ -584,7 +584,8 @@ def part(id)
         elsif answer =~ /^present /
           puts "Phoenix: OBJECTION!"
           `mpg123 -q sfx/pwobj.mp3`
-          ev = $cr.select {|x| x.name.split.any? {|i| i.downcase == name.downcase}}[0] || $cr.select {|x| x.name.downcase == name.downcase}[0]
+          name = answer.split[1..-1].join ' '
+          ev = $cr.select {|x| x.name.downcase.include? name.downcase}[0] || $pf.select {|x| x.name.downcase.include? name.downcase}[0]
           unless no == 8 and ev.name == "Cindy's Autopsy Report"
             dialog("This evidence clearly reveals the contradiction in this statement!", 'Phoenix')
             dialog("How exactly are that evidence and the statement just now related?", 'Judge')
