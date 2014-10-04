@@ -16,12 +16,14 @@ def penalize
     dialog("The accused will surrender to the court immediately,", 'Judge')
     dialog("to be held pending trial at a higher court within a month from today's date.", 'Judge')
     dialog("That is all. The court is adjourned!")
+    $health = 5
     puts "Do you want to restart from the latest save point? [y/n]"
     until (answer = gets.chomp.downcase) == 'y' or answer == 'n'
       puts "Do you want to restart from the latest save point? [y/n]"
     end
     if answer == 'y'
       part($save.transaction { $save[:part] })
+      exit! 0
     else
       exit! 0
     end
