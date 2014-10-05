@@ -5,9 +5,10 @@ class Evidence
     @name = name
     $cr << self
     unless quiet
-      puts "#{name} added to the Court Record.".bold + "\033[0m "
+      puts "\n#{name} added to the Court Record.".bold + "\033[0m "
       check(name)
       puts
+      `mpg123 -q sfx/evadd.mp3`
     end
   end
   def update(description)
@@ -43,7 +44,7 @@ class Profile
     @name = name
     $pf << self
     unless quiet
-      puts "#{name} added to the Court Record.".bold + "\033[0m "
+      puts "\n#{name} added to the Court Record.".bold + "\033[0m "
       check(name)
       puts
     end

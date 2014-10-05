@@ -1,11 +1,11 @@
 require_relative 'dialog'
-require 'pstore'
 require_relative 'evidence'
 $cr = []
 $pf = []
 $health = 5
 def penalize
   $health -= 1
+  `mpg123 -q sfx/penalty.mp3`
   puts "Penalty! Health left: #{$health}"
   if $health == 0
     dialog('This court sees no reason to further prolong this trial.', 'Judge')
@@ -110,6 +110,7 @@ def part(id)
       dialog('That and I owe him one. Which is why I took the case... to clear his name.', 'Phoenix')
       dialog('And that\'s just what I\'m going to do!', 'Phoenix')
       $save.transaction { $save[:part] = 2 }
+      `mpg123 -q sfx/save.mp3`
       puts "\n\n\nThe game has been saved."
       gets
       part(2)
@@ -175,7 +176,7 @@ def part(id)
           dialog("(I put my foot in it this time! I've got to relax!)".blue, 'Phoenix')
           dialog("Sorry, I couldn't hear your answer. I'll ask you once more:", 'Judge')
           dialog('Please state the name of' + ' the defendant '.red + 'in this case.', 'Judge')
-          puts "1) Phoenix Wright\n2) Larry Butz\n3) Mia Fey\n\n"
+          puts "\n1) Phoenix Wright\n2) Larry Butz\n3) Mia Fey\n"
         end
       end
       dialog("The defendant? Well, that's Larry Butz, Your Honor.", 'Phoenix')
@@ -285,7 +286,7 @@ def part(id)
       dialog(p="You'll get your chance to respond to the prosecution later, so be ready!", 'Mia', [p.index(',')])
       dialog(p="Let's just hope he doesn't say anything... unfortunate.", 'Mia', [p.rindex(' ')])
       dialog(p="(Uh oh, Larry gets excited easily... this could be bad.)".blue, 'Phoenix', [p.index('.')+3])
-      puts("Larry walks up to the stand...\n\n")
+      puts("\nLarry walks up to the stand...\n")
       dialog("Ahem.", 'Payne')
       dialog(p="Mr. Butz, is it not true that the victim had recently dumped you?", 'Payne', [p.index(',')])
       dialog("Hey, watch it buddy!", 'Butz')
@@ -346,7 +347,7 @@ def part(id)
       system('mpg123 -q sfx/gavel.mp3')
       dialog("Let's continue with the trial, shall we?", 'Judge')
       dialog("I believe the accused's motive is quite clear to everyone.", 'Payne')
-      dialog('Yes, quite', 'Judge')
+      dialog('Yes, quite.', 'Judge')
       dialog('(Oh boy, this is so not looking good.)'.blue, 'Phoenix')
       dialog('Next question!', 'Payne')
       dialog("You went to the victim's apartment on the day of the murder, did you not?", 'Payne')
@@ -361,7 +362,7 @@ def part(id)
         answer = gets.chomp
         if answer == '1' or answer == '1)'
           dialog("(I know, I'll send him a signal!)".blue, 'Phoenix')
-          puts "You signal Larry to tell the truth.\n\n"
+          puts "\nYou signal Larry to tell the truth.\n"
           dialog("Err... Yeah! Yeah! I was there! I went!", 'Butz')
           system('mpg123 -q sfx/rabble.mp3')
           system('mpg123 -q sfx/gavel.mp3')
@@ -371,13 +372,14 @@ def part(id)
           dialog("She wasn't home, man... so, like, I didn't see her.", 'Butz')
           puts "Payne: OBJECTION!"
           system('mpg123 -q sfx/wpobj.mp3')
+          $prev = 'Payne'
           dialog("Your Honor, the defendant is lying.", 'Payne')
           dialog('Lying?', 'Judge')
           dialog('The prosecution would like to call a witness who can prove Mr. Butz is lying.', 'Payne')
           break
         elsif answer == '2' or answer == '2)'
           dialog("(I'll send him a signal...)".blue, 'Phoenix')
-          puts "You signal Larry to lie.\n\n"
+          puts "\nYou signal Larry to lie.\n"
           dialog('Um, well, see, it\'s like this: I don\'t remember.', 'Butz')
           dialog('You "Don\'t remember"?', 'Payne')
           dialog("Well then, we'll just have to remind you!", 'Payne')
@@ -393,6 +395,7 @@ def part(id)
         end
       end
       $save.transaction { $save[:part] = 3 }
+      `mpg123 -q sfx/save.mp3`
       puts "\n\n\nThe game has been saved."
       gets
       part(3)
@@ -473,7 +476,7 @@ def part(id)
       dialog "Um... okay.", 'Phoenix'
       dialog "Type '" + "present".red + " <evidence name>' to present evidence!", 'Mia'
       dialog "You can also " + "press".red + " the witness by typing '" + "press".red + "'!", 'Mia'
-      dialog "Navigate between his statements by typing '" + "next".red + "' and '" + "prev".red + "'!"
+      dialog "Navigate between his statements by typing '" + "next".red + "' and '" + "prev".red + "'!", 'Mia'
       puts "                          Cross-Examination".bold
       puts "                        --Witness's account--".red
       `mpg123 -q sfx/testimony.mp3`
@@ -514,20 +517,21 @@ def part(id)
           dialog statements[no].green, witness
         elsif answer == 'press'
           puts "Phoenix: HOLD IT!"
+          $prev = 'Phoenix'
           `mpg123 -q sfx/pwholdit.mp3`
           case no
             when 0
               dialog("Isn't a man leaving an apartment common sight?", 'Phoenix')
               dialog("I find it odd that you would take notice of him...", 'Phoenix')
-              dialog("Er... heh.", 'Sahwit', [4])
+              dialog("Er... heh.", 'Sahwit')
               dialog("I don't know, he just seemed strange to me, that's all.", 'Sahwit')
               dialog("Like he was mad, and yet frightened at the same time.", 'Sahwit')
-              dialog('Just like... a criminal fleeing the scene of a crime!', 'Sahwit', [11])
+              dialog('Just like... a criminal fleeing the scene of a crime!', 'Sahwit')
               dialog("The defense requests that the witness refrain from conjecture!", 'Phoenix')
               dialog("Of course. What the witness means is that the man he saw looked suspicious.", 'Payne')
               dialog("So, what happened next?", 'Payne')
             when 1
-              dialog("Half-open... you say?", 'Phoenix', [11])
+              dialog("Half-open... you say?", 'Phoenix')
               dialog("Yes, yes, the door was open halfway. Yes.", 'Sahwit')
               dialog("I watched for a moment, but no one came to close the door.", 'Sahwit')
               dialog("\"That's odd, in a big city like this,\" I thought...", 'Sahwit')
@@ -542,8 +546,8 @@ def part(id)
               dialog("So, you looked into the apartment. What happened then?", 'Payne')
             when 3
               dialog("Are you sure she was dead?", 'Phoenix')
-              dialog("W-Well, no, I guess I wasn't.", 'Sahwit', [1, 6, 10])
-              dialog("But, she wasn't moving at all, and there was blood everywhere.", 'Sahwit', [3])
+              dialog("W-Well, no, I guess I wasn't.", 'Sahwit', [1])
+              dialog("But, she wasn't moving at all, and there was blood everywhere.", 'Sahwit')
               dialog("(I guess that would look fatal to anyone...)".blue, 'Phoenix')
               dialog("Very well, what happened next?", 'Phoenix')
             when 4
@@ -585,20 +589,25 @@ def part(id)
           dialog statements[no].green, witness
         elsif answer =~ /^present /
           puts "Phoenix: OBJECTION!"
+          $prev = 'Phoenix'
           `mpg123 -q sfx/pwobj.mp3`
           name = answer.split[1..-1].join ' '
           ev = $cr.select {|x| x.name.downcase.include? name.downcase}[0] || $pf.select {|x| x.name.downcase.include? name.downcase}[0]
-          unless no == 8 and ev.name == "Cindy's Autopsy Report"
-            dialog("This evidence clearly reveals the contradiction in this statement!", 'Phoenix')
-            dialog("How exactly are that evidence and the statement just now related?", 'Judge')
-            dialog("They aren't, are they...", 'Phoenix')
-            dialog("Not at all.", 'Judge')
-            dialog("Mr. Wright, please think the facts over before making accusations.", 'Judge')
-            penalize
-            dialog("(I don't think that won me any points with the judge...)".blue, 'Phoenix')
-            dialog statements[no].green, witness
+          if ev.nil?
+            puts "Unknown evidence: #{name}"
           else
-            break
+            unless no == 8 and ev.name == "Cindy's Autopsy Report"
+              dialog("This evidence clearly reveals the contradiction in this statement!", 'Phoenix')
+              dialog("How exactly are that evidence and the statement just now related?", 'Judge')
+              dialog("They aren't, are they...", 'Phoenix')
+              dialog("Not at all.", 'Judge')
+              dialog("Mr. Wright, please think the facts over before making accusations.", 'Judge')
+              penalize
+              dialog("(I don't think that won me any points with the judge...)".blue, 'Phoenix')
+              dialog statements[no].green, witness
+            else
+              break
+            end
           end
         end
       end
@@ -607,28 +616,753 @@ def part(id)
       dialog("Frankly, I find that hard to believe!", 'Phoenix')
       dialog("Your statement directly contradicts the autopsy report.", 'Phoenix')
       dialog("The autopsy report notes the time of death at some time after " + "4 PM".red + ".", 'Phoenix')
-      dialog('There was nobody to... er... no "body" to find at 1:00 PM!', 'Phoenix', [21, 27])
+      dialog('There was nobody to... er... no "body" to find at 1:00 PM!', 'Phoenix')
       dialog("How do you explain this three-hour gap?", 'Phoenix')
       dialog("!!!", 'Sahwit')
-      dialog("Oh, that! Oh, er...", 'Sahwit', [2, 8, 12])
+      dialog("Oh, that! Oh, er...", 'Sahwit')
       puts "Payne: OBJECTION!"
       system('mpg123 -q sfx/wpobj.mp3')
       dialog("This is trivial! The witness merely forgot the time!", 'Payne')
-      dialog(p="After his testimony, I find that hard to believe.", 'Judge', [p.index(',')])
+      dialog("After his testimony, I find that hard to believe.", 'Judge')
       dialog("Mr. Sahwit...", 'Judge')
       dialog("Why were you so certain that you found the body at 1:00 PM?", 'Judge')
-      dialog("I... er... well, I... Gee, that's a really good question!", 'Sahwit', [3, 9, 15, 20, 25])
+      dialog("I... er... well, I... Gee, that's a really good question!", 'Sahwit')
       dialog("Great job, Wright! Way to put him on the spot!", 'Mia')
       dialog("That's all you have to do: point out contradictions!", 'Mia')
       dialog("Lies always beget more lies!", 'Mia')
-      dialog(p="See through one, and their whole story falls apart!", 'Mia', [p.index(',')])
-      dialog(p="Wait! I remember now!", 'Sahwit', [p.index('!')])
+      dialog("See through one, and their whole story falls apart!", 'Mia')
+      dialog("Wait! I remember now!", 'Sahwit')
       dialog("Would you care to give your testimony again?", 'Judge')
+      $save.transaction{ $save[:part] = 4 }
+      `mpg123 -q sfx/save.mp3`
+      puts "The game has been saved."
+      gets
+      part(4)
+    when 4
+      Evidence.new("Attorney's Badge", "Attorney's Badge\nType: Other\nOne of my possessions.\nNobody would believe I was a defense attorney if I didn't carry it.", true)
+      Evidence.new("Cindy's Autopsy Report", "Cindy's Autopsy Report\nType: Reports\nReceived from Mia Fey.\nTime of death: 7/31, 4PM-5PM\nCause of death: loss of blood due to blunt trauma", true)
+      Evidence.new('Statue', "Statue\nType: Weapons\nSubmitted as evidence by Prosecutor Payne\nA statue in the shape of \"The Thinker.\" It's rather heavy.", true)
+      Evidence.new('Passport', "Victim's Passport\nType: Evidence\nSubmitted as evidence by Prosecutor Payne\nThe victim apparently arrived home from Paris on 7/30, the day before the murder.", true)
+      Evidence.new('Blackout Record', "Blackout Record\nType: Documents\nSubmitted as evidence by Prosecutor Payne\nElectricity to Ms. Stone's building was out from noon to 6PM on the day of the crime.", true)
+      Profile.new('Cindy Stone', "Cindy Stone\nAge: 22\nGender: Female\nThe victim in this case. A model, she lived in an apartment by herself.", true)
+      Profile.new('Larry Butz', "Larry Butz\nAge: 23\nGender: Male\nThe defendant in this case. A likeable guy who was my friend in grade school.", true)
+      Profile.new('Mia Fey', "Mia Fey\nAge: 27\nGender: Female\nChief attorney at Fey & Co.. My boss, and a very good defense attorney.", true)
+      Profile.new('Winston Payne', "Winston Payne\nAge: 52\nGender: Male\nThe prosecutor for this case. Lacks presence. Generally bad at getting his points accross.", true)
+      Profile.new('Frank Sahwit', "Frank Sahwit\nAge: 36\nGender: Male\nDiscovered Ms. Stone's body. Newspaper salesman who saw Larry flee the scene.", true)
+      puts "                           WITNESS TESTIMONY".bold
+      puts "                       --The Time of Discovery--".red
+      system("mpg123 -q sfx/testimony.mp3")
+      statements = []
+      statements << dialog("You see, when I found the body, I heard the time.", 'Sahwit')
+      statements << dialog("There was a voice saying the time... It was probably coming from the television.", 'Sahwit')
+      statements << dialog("Oh, but it was three hours off, wasn't it?", 'Sahwit')
+      statements << dialog("I guess the victim must have been watching a video of a taped program!", 'Sahwit')
+      statements << dialog("That's why I thought it was 1:00 PM!", 'Sahwit')
+      statements << dialog("Terribly sorry about the misunderstanding...", 'Sahwit')
+      dialog("Hmm... I see. You heard a voice say the time on a taped program.", 'Judge')
+      dialog("Mr. Wright, you may cross-examine the witness.", 'Judge')
+      dialog("Wright!", 'Mia')
+      dialog("You know what to do!", 'Mia')
+      dialog("I've got this one.", 'Phoenix')
+      puts "                           CROSS-EXAMINATION".bold
+      puts "                       --The Time of Discovery--".red
+      system("mpg123 -q sfx/testimony.mp3")
+      no = 0
+      witness = 'Sahwit'
+      dialog statements[no].green, witness
+      while true
+        print '> '
+        answer = gets.chomp
+        if answer.downcase == 'cr' or answer.downcase.gsub(/ /, "") == 'courtrecord'
+          disp_cr
+        elsif answer.downcase == 'pf' or answer.downcase == 'profiles'
+          disp_pf
+        elsif answer =~ /^check /i
+          check answer.split(' ')[1..-1].join(' ')
+        elsif answer == 'next'
+          no += 1
+          if no == statements.length
+            dialog("Notice anything suspicious?", 'Mia')
+            no = 0
+          end
+          dialog statements[no].green, witness
+        elsif answer == 'prev' or answer == 'previous'
+          no = [no - 1, 0].max
+          dialog statements[no].green, witness
+        elsif answer == 'press'
+          puts "Phoenix: HOLD IT!"
+          $prev = 'Phoenix'
+          `mpg123 -q sfx/pwholdit.mp3`
+          case no
+            when 0
+              dialog('You said "heard"... not "saw"?', 'Phoenix')
+              dialog("Yes, heard.", 'Sahwit')
+              dialog("All I saw was the body lying there...", 'Sahwit')
+              dialog("I didn't think to look anywhere else, least of all my watch.", 'Sahwit')
+              dialog("Hmm... Isn't that a little strange?", 'Phoenix')
+              dialog('So you\'re saying you "heard" something.', 'Phoenix')
+              dialog('But if you were so shocked by the body, you wouldn\'t hear anything at all!', 'Phoenix')
+              puts "Payne: OBJECTION!"
+              $prev = 'Payne'
+              `mpg123 -q sfx/wpobj.mp3`
+              dialog("The witness did say he actually heard the time.", 'Payne')
+              dialog("It's ludicrous to suggest he \"wouldn't hear anything\"!", 'Payne')
+              dialog("Hmm... I have to agree with the prosecution.", 'Judge')
+              dialog("Witness, continue your testimony.", 'Judge')
+            when 1
+              dialog("Are you sure it was a television and not... a radio?", 'Phoenix')
+              dialog("Well, no, I guess it might have been a radio.", 'Sahwit')
+              dialog("Incidentally, there was no radio on the premises.", 'Payne')
+              dialog("There was only one large television.", 'Payne')
+              dialog("Wright!", 'Mia')
+              dialog("I can't put my finger on it, but something about this seems fishy.", 'Mia')
+              dialog('Something about "hearing" the television...', 'Mia')
+              dialog("The witness has testified. He heard the time.", 'Payne')
+            when 2
+              dialog("How do you explain the gap!", 'Phoenix')
+              dialog("Well, witness? Can you explain this?", 'Judge')
+            when 3
+              dialog("A... video?", 'Phoenix')
+              dialog("Yes, that would explain why the time is wrong!", 'Sahwit')
+              dialog("True, true...", 'Phoenix')
+              dialog("Wright!", 'Mia')
+              dialog('I think the problem lies someplace else...', 'Mia')
+              dialog("We're agreed that you heard the time at the scene, then.", 'Judge')
+            when 4
+              dialog("Are you sure the voice you heard said it was 1:00 PM?", 'Phoenix')
+              dialog("Yes. I can practically hear it now. It was quite clear.", 'Sahwit')
+              dialog("Mr. Payne, has the prosecution verified this testimony?", 'Judge')
+              dialog("My apologies, Your Honor.", 'Payne')
+              dialog("I, too, have only just learned that the witness \"heard\" the time.", 'Payne')
+              dialog("Oh, I'm really sorry. I only remembered it just now.", 'Sahwit')
+            when 5
+              dialog("Well, you just watch it!", 'Phoenix')
+              dialog("(Hmm... Not much point pressing him on that one, was there?)".blue, 'Phoenix')
+          end
+          no = [no + 1, statements.length-1].min
+          dialog statements[no].green, witness
+        elsif answer =~ /^present /
+          puts "Phoenix: OBJECTION!"
+          $prev = 'Phoenix'
+          `mpg123 -q sfx/pwobj.mp3`
+          name = answer.split[1..-1].join ' '
+          ev = $cr.select {|x| x.name.downcase.include? name.downcase}[0] || $pf.select {|x| x.name.downcase.include? name.downcase}[0]
+          if ev.nil?
+            puts "Unknown evidence: #{name}"
+          else
+            unless no != 5 and ev.name == 'Blackout Record'
+              dialog("This evidence clearly reveals the contradiction in this statement!", 'Phoenix')
+              dialog("How exactly are that evidence and the statement just now related?", 'Judge')
+              dialog("They aren't, are they...", 'Phoenix')
+              dialog("Not at all.", 'Judge')
+              dialog("Mr. Wright, please think the facts over before making accusations.", 'Judge')
+              penalize
+              dialog("(I don't think that won me any points with the judge...)".blue, 'Phoenix')
+              dialog statements[no].green, witness
+            else
+              break
+            end
+          end
+        end
+      end
+      dialog("Hold it right there!", 'Phoenix')
+      dialog("The prosecution has said there was a blackout at the time of the discovery!", 'Phoenix')
+      dialog("And this record proves it!", 'Phoenix')
+      dialog('...!', 'Sahwit')
+      dialog("You couldn't have heard a television... or a video!", 'Phoenix')
+      dialog("Gah!!!", 'Sahwit')
+      dialog("I... well... urk!", 'Sahwit')
+      dialog("The defense has a point.", 'Judge')
+      dialog("Do you have an explanation for this, Mr. Sahwit?", 'Judge')
+      dialog("No, I... I find it quite puzzling myself! Quite!", 'Sahwit')
+      dialog('...', 'Sahwit')
+      cutscene("Aah!\n", 'Sahwit', [], 0.02)
+      dialog("W-wait! I remember now!", 'Sahwit', [1])
+      dialog("Mr. Sahwit?", 'Judge')
+      dialog("The court would prefer to hear an accurate testimony from the very beginning.", 'Judge')
+      dialog("These constant corrections are harming your credibility.", 'Judge')
+      dialog("That and you seem rather... distraught.", 'Judge')
+      dialog("...!", 'Sahwit')
+      dialog("M-my apologies, Your Honor!", 'Sahwit', [1])
+      dialog("It... er, it must have been the shock of finding the body!", 'Sahwit')
+      dialog("Very well, Mr. Sahwit.", 'Judge')
+      dialog("Let's hear your testimony once more please.", 'Judge')
+      $save.transaction{ $save[:part] = 5 }
+      `mpg123 -q sfx/save.mp3`
+      puts "The game has been saved."
+      gets
+      part(5)
+    when 5
+      Evidence.new("Attorney's Badge", "Attorney's Badge\nType: Other\nOne of my possessions.\nNobody would believe I was a defense attorney if I didn't carry it.", true)
+      Evidence.new("Cindy's Autopsy Report", "Cindy's Autopsy Report\nType: Reports\nReceived from Mia Fey.\nTime of death: 7/31, 4PM-5PM\nCause of death: loss of blood due to blunt trauma", true)
+      Evidence.new('Statue', "Statue\nType: Weapons\nSubmitted as evidence by Prosecutor Payne\nA statue in the shape of \"The Thinker.\" It's rather heavy.", true)
+      Evidence.new('Passport', "Victim's Passport\nType: Evidence\nSubmitted as evidence by Prosecutor Payne\nThe victim apparently arrived home from Paris on 7/30, the day before the murder.", true)
+      Evidence.new('Blackout Record', "Blackout Record\nType: Documents\nSubmitted as evidence by Prosecutor Payne\nElectricity to Ms. Stone's building was out from noon to 6PM on the day of the crime.", true)
+      Profile.new('Cindy Stone', "Cindy Stone\nAge: 22\nGender: Female\nThe victim in this case. A model, she lived in an apartment by herself.", true)
+      Profile.new('Larry Butz', "Larry Butz\nAge: 23\nGender: Male\nThe defendant in this case. A likeable guy who was my friend in grade school.", true)
+      Profile.new('Mia Fey', "Mia Fey\nAge: 27\nGender: Female\nChief attorney at Fey & Co.. My boss, and a very good defense attorney.", true)
+      Profile.new('Winston Payne', "Winston Payne\nAge: 52\nGender: Male\nThe prosecutor for this case. Lacks presence. Generally bad at getting his points accross.", true)
+      Profile.new('Frank Sahwit', "Frank Sahwit\nAge: 36\nGender: Male\nDiscovered Ms. Stone's body. Newspaper salesman who saw Larry flee the scene.", true)
+      puts "                           WITNESS TESTIMONY".bold
+      puts "                          --Hearing the Time--".red
+      system("mpg123 -q sfx/testimony.mp3")
+      statements = []
+      statements << dialog("Actually, I didn't \"hear\" the time, I \"saw\" it!", 'Sahwit')
+      statements << dialog("There was a table clock in the apartment, wasn't there!", 'Sahwit')
+      statements << dialog("Yeah, the murder weapon! The killer used it to hit the victim!", 'Sahwit')
+      statements << dialog("That must have been what I saw.", 'Sahwit')
+      dialog("You saw a clock? I guess that would explain it.", 'Judge')
+      dialog("The defense may cross-examine the witness.", 'Judge')
+      dialog("Gladly.", 'Phoenix')
+      puts "                           CROSS-EXAMINATION".bold
+      puts "                          --Hearing the Time--".red
+      system("mpg123 -q sfx/testimony.mp3")
+      no = 0
+      witness = 'Sahwit'
+      dialog statements[no].green, witness
+      while true
+        print '> '
+        answer = gets.chomp
+        if answer.downcase == 'cr' or answer.downcase.gsub(/ /, "") == 'courtrecord'
+          disp_cr
+        elsif answer.downcase == 'pf' or answer.downcase == 'profiles'
+          disp_pf
+        elsif answer =~ /^check /i
+          check answer.split(' ')[1..-1].join(' ')
+        elsif answer == 'next'
+          no += 1
+          if no == statements.length
+            dialog("Now, find the contradiction!", 'Mia')
+            no = 0
+          end
+          dialog statements[no].green, witness
+        elsif answer == 'prev' or answer == 'previous'
+          no = [no - 1, 0].max
+          dialog statements[no].green, witness
+        elsif answer == 'press'
+          puts "Phoenix: HOLD IT!"
+          $prev = 'Phoenix'
+          `mpg123 -q sfx/pwholdit.mp3`
+          case no
+            when 0
+              dialog("That strikes me as a very suspicious mistake.", 'Phoenix')
+              dialog("Yes, I can see how you'd be a little doubtful...", 'Sahwit')
+              dialog("I'm really sorry. I only just remembered that table clock.", 'Sahwit')
+              dialog('A "table clock"?', 'Judge')
+            when 1
+              dialog('A "table clock"? Was there a clock at the scene?', 'Phoenix')
+              dialog("This is the first I've heard of it!", 'Judge')
+            when 2
+              dialog("The... murder weapon?", 'Phoenix')
+              dialog("Yes, the table clock that was used as a weapon!", 'Sahwit')
+              dialog("That's what I just said. Did you doze off in the middle of my testimony or something?", 'Sahwit')
+              dialog("(Something's fishy here...)".blue, 'Phoenix')
+            when 3
+              dialog("Why didn't you tell us that in the first place?", 'Phoenix')
+              dialog("I guess it just slipped my mind!", 'Sahwit')
+              dialog("I'm not really sure how it happened myself...", 'Sahwit')
+              dialog("The witness says he saw the table clock. End of story.", 'Payne')
+          end
+          no += 1
+          if no == statements.length
+            dialog("Now, find the contradiction!", 'Mia')
+            no = 0
+          end
+          dialog statements[no].green, witness
+        elsif answer =~ /^present /
+          puts "Phoenix: OBJECTION!"
+          $prev = 'Phoenix'
+          `mpg123 -q sfx/pwobj.mp3`
+          name = answer.split[1..-1].join ' '
+          ev = $cr.select {|x| x.name.downcase.include? name.downcase}[0] || $pf.select {|x| x.name.downcase.include? name.downcase}[0]
+          if ev.nil?
+            puts "Unknown evidence: #{name}"
+          else
+            unless no != 0 and ev.name == 'Statue'
+              dialog("This evidence clearly reveals the contradiction in this statement!", 'Phoenix')
+              dialog("How exactly are that evidence and the statement just now related?", 'Judge')
+              dialog("They aren't, are they...", 'Phoenix')
+              dialog("Not at all.", 'Judge')
+              dialog("Mr. Wright, please think the facts over before making accusations.", 'Judge')
+              penalize
+              dialog("(I don't think that won me any points with the judge...)".blue, 'Phoenix')
+              dialog statements[no].green, witness
+            else
+              break
+            end
+          end
+        end
+      end
+      dialog("Wait just a moment!", 'Phoenix')
+      dialog("The murder weapon wasn't a clock. It was this statue!", 'Phoenix')
+      dialog("Now how is this supposed to be a clock?!", 'Phoenix')
+      cutscene("Gwaah!\n", 'Sahwit')
+      dialog('Y-You with your "objections," and your "evidence"... Just who do you think you are?!', 'Sahwit')
+      dialog("Just answer the question, Mr. Sahwit.", 'Phoenix')
+      dialog("Hey, I... I saw it there, okay! That's a clock!", 'Sahwit')
+      dialog("Your Honor! If I may...", 'Payne')
+      dialog("Yes, Mr. Payne?", 'Judge')
+      dialog("As the witness stated, this statue is indeed a clock.", 'Payne')
+      dialog("The neck is a switch. You just tilt it, and it says the time out loud.", 'Payne')
+      dialog("As it doesn't look like a clock, I submitted it as a statue. My apologies.", 'Payne')
+      dialog("I see.", 'Judge')
+      dialog("So the murder weapon was a table clock after all.", 'Judge')
+      dialog("Well, Mr. Wright?", 'Judge')
+      dialog("It appears that the witness's testimony was correct. This is a clock.", 'Judge')
+      dialog("Do you have any problems with his testimony now?", 'Judge')
+      puts "[y/n]"
+      until (answer = gets.chomp.downcase) == 'y' or answer == 'n'
+        puts "[y/n]"
+      end
+      if answer == 'y'
+        dialog("Your Honor, there is a gaping hole in the witness's testimony!", 'Phoenix')
+      else
+        dialog("I guess not.", 'Phoenix')
+        dialog("There was a clock on the scene, so, no problem.", 'Phoenix')
+        dialog("Wright! Are you out of your mind?!", 'Mia')
+        dialog("That clock doesn't look like a clock at all!", 'Mia')
+        dialog("The witness couldn't have known it was a clock just by seeing it!", 'Mia')
+        dialog("He said himself, he never entered the apartment!", 'Mia')
+        dialog("It was in his testimony!", 'Mia')
+        dialog("Hey! You're right!", 'Phoenix')
+        dialog("Is something the matter? Does the defense have anything to add?", 'Judge')
+        dialog("Yes... Yes I do!", 'Phoenix')
+      end
+      dialog("The only way he could've known the weapon was a clock was to hold it in his hands.", 'Phoenix')
+      dialog("Yet the witness testified that he didn't enter the apartment.", 'Phoenix')
+      dialog("Clearly, a contradiction!", 'Phoenix')
+      dialog("Hmm... indeed!", 'Judge')
+      dialog("The witness knew it was a clock, because he...", 'Phoenix')
+      puts "1) Went into the apartment\n2) Knew the victim"
+      while true
+        print '> '
+        answer = gets.chomp
+        if answer == '1' or answer == '1)'
+          break
+        elsif answer.downcase == 'cr' or answer.downcase.gsub(/ /, "") == 'courtrecord'
+          disp_cr
+        elsif answer.downcase == 'pf' or answer.downcase == 'profiles'
+          disp_pf
+        elsif answer =~ /^check /i
+          check answer.split(' ')[1..-1].join(' ')
+        elsif answer == '2' or answer == '2)'
+          dialog("Tell me, isn't it true that you knew the victim?", 'Phoenix')
+          dialog('In fact, you were one of her "sugar daddies"! Be frank with us, Mr. Sahwit!', 'Phoenix')
+          dialog('"Frank"? I\'m always "Frank"', 'Sahwit')
+          dialog('Your Honor.', 'Payne')
+          dialog('We have complete records of the victim\'s relationships.', 'Payne')
+          dialog("Frank Sahwit does not appear anywhere.", 'Payne')
+          dialog("Huh? Oh, really?", 'Phoenix')
+          dialog('Please, Mr. Wright... Is "Huh" really the best response you can muster up?', 'Judge')
+          dialog("Try to refrain from making off-the-cuff accusations in the future.", 'Judge')
+          dialog("Y-Yes, Your Honor. Let me think this over.", 'Phoenix')
+          dialog("The witness knew it was a clock, because he...", 'Phoenix')
+          puts "1) Went into the apartment\n2) Knew the victim"
+        end
+      end
+      dialog("You're lying!", 'Phoenix')
+      dialog("You were inside the apartment on the day of the murder!", 'Phoenix')
+      dialog("Oh yeah? Prove it! Prove I went in there!", 'Sahwit')
+      dialog("I'll do better than that! I can prove you were the one who killed her!", 'Phoenix')
+      dialog("You struck her with the clock, and the shock of the blow triggered the clock's voice!", 'Phoenix')
+      dialog("That was the sound you heard!", 'Phoenix')
+      system('mpg123 -q sfx/rabble.mp3')
+      system('mpg123 -q sfx/gavel.mp3')
+      dialog("Order in the court!", 'Judge')
+      dialog("Intruiging. Please continue, Mr. Wright.", 'Judge')
+      dialog("Yes, Your Honor.", 'Phoenix')
+      dialog("Mr. Sahwit.", 'Phoenix')
+      dialog("The sound must have left quite an impression on you.", 'Phoenix')
+      dialog("Understandable, since the murder weapon spoke just as you hit the victim!", 'Phoenix')
+      dialog("That voice was burned into your mind.", 'Phoenix')
+      dialog("That's why you were so certain about the time!", 'Phoenix')
+      puts "Payne: OBJECTION!"
+      $prev = 'Payne'
+      `mpg123 -q sfx/wpobj.mp3`
+      dialog("W-what's the meaning of this?!", 'Payne')
+      dialog("This is all baseless conjecture!", 'Payne')
+      dialog("Baseless...?", 'Phoenix')
+      dialog("Just look at the witness's face!", 'Phoenix')
+      puts "\nMr. Sahwit looks positively murderous."
+      dialog("Ngh... grrah!", 'Sahwit')
+      dialog("Would the witness care to elaborate?", 'Judge')
+      dialog("Did you strike the victim with the clock?", 'Judge')
+      dialog("I... I...! That... That day... I... I never!", 'Sahwit')
+      cutscene("Look... I... The clock... I heard, no! I mean, I saw...Saw... nggg!\n", 'Sahwit')
+      cutscene("Gwaaaaaaaaaaah!\n", 'Sahwit', [], 0.02)
+      puts "\nMr. Sahwit throws his wig in your face."
+      dialog("Shutupshutupshutup! I hate you!", 'Sahwit')
+      dialog("I-it was him, I tell you! I saw him!", 'Sahwit')
+      dialog("H-he killed her and he should burn! Burn! Give him death!", 'Sahwit')
+      system('mpg123 -q sfx/rabble.mp3')
+      system('mpg123 -q sfx/gavel.mp3')
+      dialog("Order! Order in the court I say!", 'Judge')
+      dialog("Your Honor, a-a moment please.", 'Payne')
+      dialog("There isn't a shred of evidence supporting the defense's claims!", 'Payne')
+      dialog("Mr. Wright!", 'Judge')
+      dialog("Your Honor?", 'Phoenix')
+      dialog("You claim the sound the witness heard came from the clock...", 'Judge')
+      dialog("Do you have any evidence?", 'Judge')
+      dialog("(The whole case is riding on this! I'd better think it through carefully!)".blue, 'Phoenix')
+      dialog("Yes, Your Honor.", 'Phoenix')
+      dialog("The sound Mr. Sahwit heard was definitely this clock.", 'Phoenix')
+      dialog("A fact which is clear if you simply...", 'Phoenix')
+      puts "1) Examine the batteries\n2) Ask the neighbours\n3) Try sounding the clock"
+      while true
+        print '> '
+        answer = gets.chomp
+        if answer == '3' or answer == '3)'
+          break
+        elsif answer.downcase == 'cr' or answer.downcase.gsub(/ /, "") == 'courtrecord'
+          disp_cr
+        elsif answer.downcase == 'pf' or answer.downcase == 'profiles'
+          disp_pf
+        elsif answer =~ /^check /i
+          check answer.split(' ')[1..-1].join(' ')
+        elsif answer == '1' or answer == '1)'
+          dialog("All you have to do is examine the batteries!", 'Phoenix')
+          dialog("Indeed? The batteries are... in the right way. The clock seems to be working fine.", 'Judge')
+          dialog("What exactly did you mean, Mr. Wright?", 'Judge')
+          dialog("Yes, the clock was working fine!", 'Phoenix')
+          dialog("Yes, and...?", 'Payne')
+          dialog('...', 'Phoenix')
+          dialog("Umm, I'm sorry, I think I got confused back there with all those testimonies.", 'Phoenix')
+          dialog("Mr. Wright!", 'Judge')
+          dialog("I expect more from a lawyer in this court. Even if it is your first day.", 'Judge')
+          dialog("I'm afraid I'll have to penalize you! Try to think things through more carefully.", 'Judge')
+          penalize
+          dialog("Y-Yes, Your Honor. As I was saying...", 'Phoenix')
+          dialog("(The whole case is riding on this! I'd better think it through carefully!)".blue, 'Phoenix')
+          dialog("Yes, Your Honor.", 'Phoenix')
+          dialog("The sound Mr. Sahwit heard was definitely this clock.", 'Phoenix')
+          dialog("A fact which is clear if you simply...", 'Phoenix')
+          puts "1) Examine the batteries\n2) Ask the neighbours\n3) Try sounding the clock"
+        elsif answer == '2' or answer == '2)'
+          dialog("All you have to do is ask the victim's neighbours!", 'Phoenix')
+          dialog("Talk to the neighbors...?", 'Judge')
+          dialog("I'm sure one of them heard the clock tell the time when the incident occurred!", 'Phoenix')
+          dialog("I see...", 'Judge')
+          dialog("Does the prosecution have anything to say, Mr. Payne?", 'Judge')
+          dialog("We have already made all the necessary inquiries.", 'Payne')
+          dialog("Everyone living near the victim's apartment was out at the time of the murder.", 'Payne')
+          dialog("Furthermore, even if a neighbor had heard the clock,", 'Payne')
+          dialog("That would not prove that Mr. Sahwit heard anything.", 'Payne')
+          dialog("Hmm... that is true.", 'Judge')
+          dialog("I believe you may be wrong, Mr. Wright.", 'Judge')
+          dialog("You'll recieve a penalty for that, unfortunately.", 'Judge')
+          penalize
+          dialog("I-I'm so sorry, Your Honor! Let me think about it again!", 'Phoenix')
+          dialog("(The whole case is riding on this! I'd better think it through carefully!)".blue, 'Phoenix')
+          dialog("Yes, Your Honor.", 'Phoenix')
+          dialog("The sound Mr. Sahwit heard was definitely this clock.", 'Phoenix')
+          dialog("A fact which is clear if you simply...", 'Phoenix')
+          puts "1) Examine the batteries\n2) Ask the neighbours\n3) Try sounding the clock"
+        end
+      end
+      dialog("Let's sound the clock now, here in this court.", 'Phoenix')
+      dialog("Your Honor, may I have the clock?", 'Phoenix')
+      dialog("I ask the court to listen very carefully...", 'Phoenix')
+      dialog("...*beep*...".red, 'Alarm Clock')
+      time = Time.now
+      #dialog("[I think it's ".green + ((time.hour-3) % 12).to_s.green + ":".green + time.min.to_s.green + (time.hour-3 > 12 ? "PM." : "AM.").green + "]".green, 'Alarm Clock')
+      dialog("[I think it's 8:25.]".green, 'Alarm Clock')
+      dialog("That certainly is a strange way to announce the time.", 'Judge')
+      dialog('Well, he is "The Thinker," after all.', 'Phoenix')
+      dialog("So, we've heard the clock. What are your conclusions, Mr. Wright?", 'Judge')
+      dialog("Mr. Payne... can you tell me what time it is now?", 'Phoenix')
+      #dialog("It's " + (Time.now.hour % 12).to_s + ':' + Time.now.min.to_s + (Time.now.hour > 12 ? "PM." : "AM."), 'Payne')
+      dialog("It's 11:25...", 'Payne')
+      dialog("Ack!", 'Payne')
+      dialog("As you can see, this clock is exactly three hours slow!", 'Phoenix')
+      dialog("Precisely the discrepancy between what Mr. Sahwit heard and the actual time of death!", 'Phoenix')
+      dialog("So, Mr. Sahwit...", 'Phoenix')
+      dialog("Try to talk your way out of this one!", 'Phoenix')
+      dialog("...", 'Sahwit')
+      dialog("...Hah! Hah hah!", 'Sahwit')
+      dialog("You forgot one thing!", 'Sahwit')
+      dialog("(Uh oh... what's he talking about...?)".blue, 'Phoenix')
+      dialog("While it might seem like that clock IS running three hours slow...", 'Sahwit')
+      dialog("It proves nothing!", 'Sahwit')
+      dialog("How do you know it was running slow " + "on the day of the murder".red + "?!", 'Sahwit')
+      dialog("If you can't prove that, you don't have a case!", 'Sahwit')
+      dialog("...!", 'Phoenix')
+      dialog("(He's right! How am I going to prove that?!)".blue, 'Phoenix')
+      dialog("(Dammit! I was so close!)".blue, 'Phoenix')
+      dialog("Mr. Wright?", 'Judge')
+      dialog("It seems you lack the critical evidence to support your claim.", 'Judge')
+      dialog("...!", 'Phoenix')
+      dialog("Yes, Your Honor.", 'Phoenix')
+      dialog("This means I cannot let you indict the witness.", 'Judge')
+      dialog("Unfortunately...", 'Judge')
+      system('mpg123 -q sfx/gavel.mp3')
+      dialog("This ends the cross-examination of Frank Sahwit.", 'Judge')
+      dialog("I come all the way down here to testify, and look what happens!", 'Sahwit')
+      dialog("They treat me like a criminal! A criminal!", 'Sahwit')
+      dialog("You lawyers are all slime!", 'Sahwit')
+      dialog("(Grr! I almost had him...)".blue, 'Phoenix')
+      dialog("(Sorry, Larry... I failed you.)".blue, 'Phoenix')
+      dialog("(There's nothing I can do about it now...)".blue, 'Phoenix')
+      sleep(0.5)
+      dialog("Not so fast, Mr. Sahwit!", 'Mia')
+      dialog("Mia! I mean, Chief!", 'Phoenix')
+      dialog("Listen up, Wright!", 'Mia')
+      dialog("Don't throw this one away, not like this! Think!", 'Mia')
+      dialog("But, Chief, it's over!", 'Phoenix')
+      dialog("I can't prove the clock was slow on the day of the murder!", 'Phoenix')
+      dialog("Nobody can prove that!", 'Phoenix')
+      dialog("Umm... well, yes.", 'Mia')
+      dialog("But that doesn't mean you can't still win! Try thinking out of the box!", 'Mia')
+      dialog("Don't waste time doubting the facts. Assume the clock was three hours slow and...", 'Mia')
+      dialog("Think through it!", 'Mia')
+      dialog("Ask yourself, " '"Why was the clock three hours slow"'.red + "?", 'Mia')
+      dialog("Figure out the reason, and you'll have your proof!", 'Mia')
+      dialog("Right, Wright?", 'Mia')
+      dialog("Can you think of a reason as to why the clock was three hours slow?", 'Mia')
+      puts "[y/n]"
+      print '> '
+      until (answer = gets.chomp.downcase) == 'y' or answer == 'n'
+        if answer == 'cr' or answer.gsub(/ /, "") == 'courtrecord'
+          disp_cr
+        elsif answer == 'pf' or answer == 'profiles'
+          disp_pf
+        elsif answer =~ /^check /i
+          check answer.split(' ')[1..-1].join(' ')
+        end
+        print '> '
+      end
+      if answer == 'y'
+        dialog('...', 'Phoenix')
+        dialog('Wait!', 'Phoenix')
+        dialog("Maybe I can prove it!", 'Phoenix')
+        dialog("You must have evidence somewhere that can prove it, Wright!", 'Mia')
+        dialog("Find it and let them have it!", 'Mia')
+        dialog("Well, Mr. Wright?", 'Judge')
+        dialog("You say the clock was already running slow on the day of the murder...", 'Judge')
+        dialog("Have you found evidence to support this claim?", 'Judge')
+        dialog("Of course.", 'Phoenix')
+        dialog("There is a piece of evidence in the Court Record that can prove my claim beyond a doubt!", 'Phoenix')
+        dialog("Hah! Tough words! Let's see you pull this one off!", 'Sahwit')
+      else
+        dialog("H-How am I supposed to know that?!", 'Phoenix')
+        dialog("I know you can figure it out!", 'Mia')
+        dialog("There must be some evidence in the Court Record...", 'Mia')
+        dialog("Something that can show why the clock was running three hours slow!", 'Mia')
+        dialog("Find it, and he won't have a foot to stand on!", 'Mia')
+        dialog("Mr. Wright?", 'Judge')
+        dialog("Y-y-yes, Your Honor!", 'Phoenix', [1, 3])
+        dialog("You say the clock was already running slow on the day of the murder...", 'Judge')
+        dialog("Do you have evidence to prove this?", 'Judge')
+        dialog(p="(This is it... all or nothing!)".blue, 'Phoenix')
+        dialog("Yes, Your Honor.", 'Phoenix')
+        dialog("I believe I have the evidence that can prove my claim!", 'Phoenix')
+        dialog("Hah hah! I'd like to see THAT!", 'Sahwit')
+      end
+      dialog("Let's see this evidence that proves why the clock was running slow!", 'Judge')
+      puts "Present evidence by typing 'present'."
+      while true
+        print '> '
+        answer = gets.chomp
+        if answer.downcase == 'cr' or answer.downcase.gsub(/ /, "") == 'courtrecord'
+          disp_cr
+        elsif answer.downcase == 'pf' or answer.downcase == 'profiles'
+          disp_pf
+        elsif answer =~ /^check /i
+          check answer.split(' ')[1..-1].join(' ')
+        elsif answer =~ /^present /i
+          puts "Phoenix: TAKE THAT!"
+          $prev = 'Phoenix'
+          `mpg123 -q sfx/pwtt.mp3`
+          name = answer.split[1..-1].join ' '
+          ev = $cr.select {|x| x.name.downcase.include? name.downcase}[0]
+          if ev.nil?
+            puts "Unknown evidence: #{name}"
+          else
+            unless ev.name == 'Passport'
+              dialog("Um, excuse me. This proves your claim... how?", 'Judge')
+              dialog("I can't see what that evidence has to do with the clock.", 'Judge')
+              dialog("(D'oh! That wasn't it!)".blue, 'Phoenix')
+              dialog("One more chance... Give me just one more chance!", 'Phoenix')
+              dialog("Alright, Mr. Wright, but time is not on your side.", 'Judge')
+              dialog("Be quick about it.", 'Judge')
+              dialog("Let's see this evidence that proves why the clock was running slow!", 'Judge')
+            else
+              break
+            end
+          end
+        end
+      end
+      dialog("The victim had just returned home from abroad the day before the murder.", 'Phoenix')
+      dialog("As we all know, the time difference between Paris and here is nine hours!", 'Phoenix')
+      dialog("When it's 4:00 PM here, it's 1:00 AM the next day there.", 'Phoenix')
+      dialog("The clock wasn't three hours slow, it was nine hours fast!", 'Phoenix')
+      dialog("The victim hadn't reset her clock since returning home!", 'Phoenix')
+      dialog("That's why the time you heard when you struck her dead in her apartment was wrong!", 'Phoenix')
+      dialog("Proof enough for you, Mr. Sahwit? Or should I say... Mr. Did It!", 'Phoenix')
+      cutscene("Ngh! ...!", 'Sahwit')
+      puts "\nMr. Sahwit faints from the pressure and falls to the ground at the witness stand."
+      `mpg123 -q sfx/gavel.mp3`
+      `mpg123 -q sfx/gavel.mp3`
+      `mpg123 -q sfx/gavel.mp3`
+      dialog("O-order! Order, I say!", 'Judge')
+      dialog("Well...", 'Judge')
+      dialog("This case has certainly turned out differently than we all expected.", 'Judge')
+      dialog("Mr. Payne... your client?", 'Judge')
+      dialog("He... er... he was arrested and has been taken away, Your Honor.", 'Payne')
+      dialog("Very well.", 'Judge')
+      dialog("Mr. Wright?", 'Judge')
+      dialog("Yes, Your Honor.", 'Phoenix')
+      dialog("I have to say, I'm impressed.", 'Judge')
+      dialog("I don't think I've ever seen someone complete a defense so quickly...", 'Judge')
+      dialog("and find the true culprit at the same time!", 'Judge')
+      dialog("Thank you, Your Honor.", 'Phoenix')
+      dialog("At this point, this is only a formality, but...", 'Judge')
+      dialog("This court finds the defendant, Mr. Larry Butz...", 'Judge')
+      dialog("Not Guilty.", 'Judge')
+      `mpg123 -q sfx/notguilty.mp3`
+      dialog("And with that... the court is adjourned.", 'Judge')
+      clearscreen
+      dialog("It turns out that Frank Sahwit was a common burglar!", 'Phoenix')
+      dialog("He posed as a newspaper salesman to check and see when people were out of their house!", 'Phoenix')
+      dialog("That day...", 'Phoenix')
+      dialog("When Larry went to her apartment, the victim wasn't home.", 'Phoenix')
+      dialog("After he left, Mr. Sahwit let himself in to do his dirty work!", 'Phoenix')
+      dialog("While he was searching her place, the victim returned!", 'Phoenix')
+      dialog("Flustered, Mr. Sahwit grabbed the nearest blunt object he could find...", 'Phoenix')
+      clearscreen
+      dialog(p = "August 3, 2:32 PM\nDistrict Court\nDefendant Lobby No. 2".green.bold, '', (0..p.length).to_a.select {|x| p[x] == "\n"}, 0.1, 0.3)
+      dialog("(Whew, I still can't believe we won!)".blue, 'Phoenix')
+      dialog("Wright! Good job in there!", 'Mia')
+      dialog("Congratulations!", 'Mia')
+      dialog("Th-thanks, Chief. I owe it all to you.", 'Phoenix', [2])
+      dialog("Not at all, not at all! You fought your own battles in there.", 'Mia')
+      dialog("It's been a while since I've seen a trial end on such a satisfying note!", 'Mia')
+      dialog("(I've never seen the Chief looking this happy...)".blue, 'Phoenix')
+      dialog("(If she's this glad, imagine how Larry must feel!)".blue, 'Phoenix')
+      dialog("My life is over...", 'Butz')
+      dialog("Larry! You're supposed to be happy! What's wrong now?", 'Phoenix')
+      dialog("Aww, Nick...", 'Butz')
+      dialog("Don't worry 'bout me! I'll be dead and gone soon!", 'Butz')
+      dialog("Good! Wait, no! I mean... Bad! Bad bad bad!", 'Phoenix')
+      dialog("Larry, you're innocent! The case is closed.", 'Phoenix')
+      dialog('...', 'Butz')
+      dialog("But... but my Cindy-windy's gone, man! Gone forever!", 'Butz')
+      dialog("(Larry, she was a... Nah... Never mind.)".blue, 'Phoenix')
+      dialog("Congratulations, Harry!", 'Mia')
+      dialog("H-Harry...?", 'Butz')
+      dialog('Yes, you! I can practically see the headlines now: "Harry Butz, Innocent!"', 'Mia')
+      dialog("Heh... um... thanks! I really owe you one.", 'Butz')
+      dialog("I won't forget this, ever! Let's celebrate! Dinner? Movie? My treat!", 'Butz')
+      dialog("Oh, no, I couldn't.", 'Mia')
+      dialog("(Hey, I was the one who got you off the hook!)".blue, 'Phoenix')
+      dialog('Oh, hey!', 'Butz')
+      puts "Larry holds out the statue of The Thinker.\n\n"
+      dialog("H-here, take this! It's a present!", 'Butz')
+      dialog("A present? For me?", 'Mia')
+      dialog("Wait... Wasn't this the evidence that...", 'Mia')
+      dialog("Actually, I made this clock for her!", 'Butz')
+      dialog("I made one for her and one for me.", 'Butz')
+      dialog("R-Really? You? You made this?", 'Mia')
+      dialog('...', 'Mia')
+      dialog("Well, thank you. I'll keep it as a memento.", 'Mia')
+      dialog("Yo, Nick...", 'Butz')
+      dialog("Can you believe it? I was so into that chick...", 'Butz')
+      dialog("And... and she was just playing me for a fool!", 'Butz')
+      dialog("Don't that make you wanna just cry? *sob*", 'Butz')
+      dialog("Larry...", 'Phoenix')
+      dialog('...', 'Mia')
+      dialog("Are you so sure?", 'Mia')
+      dialog("Ex-queeze me?", 'Butz')
+      dialog("I think she thought quite a lot of you, in her own way.", 'Mia')
+      dialog("Nah, you don't gotta sympathize with me, 'sokay.", 'Butz')
+      dialog("Oh, I'm not just sympathizing, really.", 'Mia')
+      dialog("Isn't that right, Wright? Don't you have something to show your friend?", 'Mia')
+      dialog("Something that proves how she felt about him?", 'Mia')
+      dialog("H-huh? Oh, yeah, right!", 'Phoenix')
+      dialog("(What the heck is she talking about?)".blue, 'Phoenix')
+      puts "Present evidence by typing 'present'."
+      while true
+        print '> '
+        answer = gets.chomp
+        if answer.downcase == 'cr' or answer.downcase.gsub(/ /, "") == 'courtrecord'
+          disp_cr
+        elsif answer.downcase == 'pf' or answer.downcase == 'profiles'
+          disp_pf
+        elsif answer =~ /^check /i
+          check answer.split(' ')[1..-1].join(' ')
+        elsif answer =~ /^present /i
+          puts "Phoenix: TAKE THAT!"
+          $prev = 'Phoenix'
+          `mpg123 -q sfx/pwtt.mp3`
+          name = answer.split[1..-1].join ' '
+          ev = $cr.select {|x| x.name.downcase.include? name.downcase}[0]
+          if ev.nil?
+            puts "Unknown evidence: #{name}"
+          else
+            unless ev.name == 'Statue'
+              dialog("Here you go, Larry. Proof.", 'Phoenix')
+              dialog("...", 'Butz')
+              dialog("Eh... heh heh? It's okay, Nick. Don't worry about me.", 'Butz')
+              dialog("I'll forget about her soon enough.", 'Butz')
+              dialog("Look, I'm gonna head home. Thanks a ton, eh?", 'Butz')
+              dialog("(Guess that wasn't the right thing to show him...)".blue, 'Phoenix')
+              break
+            else
+              dialog("Check this out, Larry. Proof Positive you weren't just some chump to her.", 'Phoenix')
+              dialog("Huh...? Where'd you get that clock?", 'Butz')
+              dialog("This is the clock you made for her, Larry!", 'Phoenix')
+              dialog("She took it with her when she traveled.", 'Phoenix')
+              dialog("Hmm, she probably just needed a clock, that's all.", 'Butz')
+              dialog("You think so? It's a pretty heavy clock to take traveling.", 'Phoenix')
+              dialog('...', 'Butz')
+              dialog("Well, make of it what you will.", 'Phoenix')
+              dialog('...', 'Butz')
+              dialog("Hey, Nick.", 'Butz')
+              dialog("I'm glad I asked you to be my lawyer.", 'Butz')
+              dialog('Really, I am. Thanks.', 'Butz')
+              dialog("(Hope that made him feel a little better...)".blue, 'Phoenix')
+              break
+            end
+          end
+        end
+      end
+      dialog("Wright?", 'Mia')
+      dialog("I hope you see the importance of evidence now.", 'Mia')
+      dialog("Also, hopefully you realize, things change depending on how you look at them.", 'Mia')
+      dialog("People, too.", 'Mia')
+      dialog("We never really know if our clients are innocent or guilty.", 'Mia')
+      dialog("All we can do is believe in them.", 'Mia')
+      dialog("And in order to believe in them, you have to believe in yourself.", 'Mia')
+      dialog("Wright...", 'Mia')
+      dialog("Listen. Learn. Grow strong.", 'Mia')
+      dialog("Never let go of what you believe in. Never.", 'Mia')
+      puts
+      dialog("Well, I believe our work here is done! Shall we be off?", 'Mia')
+      dialog("Yeah, I guess so!", 'Phoenix')
+      dialog("Say, how about dinner. On me?", 'Mia')
+      dialog("We'll drink a toast to innocent Butz!", 'Mia')
+      dialog("Yeah!", 'Phoenix')
+      dialog("Oh, speaking of Harry...", 'Mia')
+      dialog("You were saying part of why you became a lawyer was because of him.", 'Mia')
+      dialog("Er, yeah. Part, at least.", 'Phoenix')
+      dialog("You'll have to tell me more about it sometime! Maybe... over drinks?", 'Mia')
+      clearscreen
+      dialog("And so, my first trial came to a close.", 'Phoenix')
+      dialog("Larry slapped me on the back and said, \"Gee, Nick, it's good to have friends!\"", 'Phoenix')
+      dialog("But I'm pretty sure he's not going to pay me. Unless you count the clock he gave to Mia.", 'Phoenix')
+      dialog('...', 'Phoenix')
+      dialog("I didn't know it then...", 'Phoenix')
+      dialog("but that clock was soon going to be at the center of another incident.", 'Phoenix')
+      dialog("And my promise to tell the chief about me and Larry...", 'Phoenix')
+      dialog("would be one promise that I wouldn't be able to keep.", 'Phoenix')
+      puts "THE END."
+      puts "A new episode has been added: Turnabout Sisters."
+      $episodes.transaction { $episodes[:eps] = 2 unless $episodes[:eps] > 2 }
   end
 end
-$save = PStore.new('first.pstore')
-if $save.transaction { $save[:part] }.nil? or not $save.transaction { $save[:part] }.is_a? Numeric
-  $save.transaction { $save[:part] = 1 }
+unless __FILE__ == $0
+  $save = PStore.new('first.pstore')
+  if $save.transaction { $save[:part] }.nil? or not $save.transaction { $save[:part] }.is_a? Numeric
+    $save.transaction { $save[:part] = 1 }
+  end
+  part($save.transaction { $save[:part] })
 end
-part($save.transaction { $save[:part] })
-
