@@ -25,7 +25,7 @@ end
 def char_if_pressed
   c = nil
   if $stdin.ready?
-    if RUBY_PLATFORM =~ IS_WIN
+    if IS_WIN
       require 'win32api'
       c = Win32API.new('crtdll', '_getch', [], 'L').Call
     else
@@ -56,7 +56,7 @@ def dialog(text, name='', pauses=[], delay=0.05, pausedelay=0.2, autoend=false)
   puts unless $prev == name
   unless name == ''; print "#{name}: " end
 
-  unless RUBY_PLATFORM =~ IS_WIN
+  unless IS_WIN
     `stty -echo`
   end
   sleep(pausedelay)
@@ -70,7 +70,7 @@ def dialog(text, name='', pauses=[], delay=0.05, pausedelay=0.2, autoend=false)
         gets
       end
       $prev = name
-      unless RUBY_PLATFORM =~ IS_WIN
+      unless IS_WIN
         `stty echo`
       end
       return text
@@ -95,7 +95,7 @@ def dialog(text, name='', pauses=[], delay=0.05, pausedelay=0.2, autoend=false)
     gets
   end
   $prev = name
-  unless RUBY_PLATFORM =~ IS_WIN
+  unless IS_WIN
     `stty echo`
   end
   text
