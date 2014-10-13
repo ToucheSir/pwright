@@ -1,12 +1,15 @@
 require_relative 'colorize'
+
+IS_WIN = RUBY_PLATFORM =~ /win|mingw/
+
 begin
-  require 'win32/console/ANSI' if RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
+  require 'win32/console/ANSI' if IS_WIN
 rescue LoadError
   raise 'You must use "gem install win32console" before using colors.'
 end
 
 def clearscreen
-  if RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
+  if IS_WIN
     system 'cls'
   else
     system 'clear'
@@ -22,7 +25,7 @@ end
 def char_if_pressed
   c = nil
   if $stdin.ready?
-    if RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
+    if RUBY_PLATFORM =~ IS_WIN
       require 'win32api'
       c = Win32API.new('crtdll', '_getch', [], 'L').Call
     else
@@ -49,9 +52,11 @@ def dialog(text, name='', pauses=[], delay=0.05, pausedelay=0.2, autoend=false)
     pauses -= [text.length-1]
     pauses -= [text.length-2]
   end
+
   puts unless $prev == name
   unless name == ''; print "#{name}: " end
-  unless RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
+
+  unless RUBY_PLATFORM =~ IS_WIN
     `stty -echo`
   end
   sleep(pausedelay)
@@ -65,7 +70,7 @@ def dialog(text, name='', pauses=[], delay=0.05, pausedelay=0.2, autoend=false)
         gets
       end
       $prev = name
-      unless RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
+      unless RUBY_PLATFORM =~ IS_WIN
         `stty echo`
       end
       return text
@@ -90,7 +95,7 @@ def dialog(text, name='', pauses=[], delay=0.05, pausedelay=0.2, autoend=false)
     gets
   end
   $prev = name
-  unless RUBY_PLATFORM =~ /win/ or RUBY_PLATFORM =~ /mingw/
+  unless RUBY_PLATFORM =~ IS_WIN
     `stty echo`
   end
   text
